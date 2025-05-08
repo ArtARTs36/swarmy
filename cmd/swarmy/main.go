@@ -26,7 +26,12 @@ func main() {
 				Options: []go_console.Option{
 					{
 						Name:        "output",
-						Description: "path to output Makefile path",
+						Description: "path to output Makefile",
+						Value:       option.Optional,
+					},
+					{
+						Name:        "join",
+						Description: "path to Makefile, which joined with output",
 						Value:       option.Optional,
 					},
 				},
@@ -55,6 +60,7 @@ func runMakeCommand(cmd *go_console.Script) go_console.ExitCode {
 
 	err := makegen.NewOperation().Run(makegen.Params{
 		ComposeFilePaths: cmd.Input.ArgumentList("compose-file"),
+		JoinPath:         cmd.Input.Option("join"),
 	}, output)
 	if err != nil {
 		cmd.Output.Println(err.Error())

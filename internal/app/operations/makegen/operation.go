@@ -6,6 +6,7 @@ import (
 	"github.com/artarts36/swarmy/internal/types/composefile"
 	"html/template"
 	"io"
+	"os"
 	"path/filepath"
 	"strings"
 )
@@ -15,6 +16,7 @@ type Operation struct {
 
 type Params struct {
 	ComposeFilePaths []string
+	JoinPath         string
 }
 
 func NewOperation() *Operation {
@@ -48,6 +50,18 @@ func (op *Operation) Run(params Params, result io.Writer) error {
 			}
 
 			stacks = append(stacks, stack)
+		}
+	}
+
+	if params.JoinPath != "" {
+		joinFile, err := os.ReadFile(params.JoinPath)
+		if err != nil {
+			return fmt.Errorf("open joining makefile: %w", err)
+		}
+
+		_, err = result.Write(joinFile)
+		if err != nil {
+			return fmt.Errorf("write joining makefile to output: %w", err)
 		}
 	}
 
