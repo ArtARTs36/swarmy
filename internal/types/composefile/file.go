@@ -55,10 +55,7 @@ func ParseFile(path string) (*File, error) {
 	}
 
 	file.Name = filepath.Base(path)
-	file.Path, err = filepath.Abs(path)
-	if err != nil {
-		return nil, fmt.Errorf("get abs path: %w", err)
-	}
+	file.Path = path
 
 	for name, service := range file.Services {
 		service.Name = name
