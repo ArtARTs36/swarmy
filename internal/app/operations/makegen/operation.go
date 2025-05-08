@@ -63,7 +63,7 @@ func (op *Operation) parseStack(path string) (*stackSpec, error) {
 		for _, job := range service.DeployJobs.Before {
 			stack.DeployJobs.Before = append(stack.DeployJobs.Before, deployJobSpec{
 				DeployJob: job,
-				Service:   &service,
+				Service:   service,
 			})
 		}
 	}

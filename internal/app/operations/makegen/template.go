@@ -5,9 +5,9 @@ import "github.com/artarts36/swarmy/internal/types/composefile"
 const makefileTemplate = `{{ range $stack := .Stacks }}.PHONY: up-{{ $stack.Name }}
 up-{{ $stack.Name }}: ## Deploy {{ $stack.Name }} to Swarm
 	{{- range $job := $stack.DeployJobs.Before }}
-	@echo "> Running job \"{{ $job.Name }}\""
+	@echo "> Running job \"{{ $job.Service.Name }}-{{ $job.Name }}\""
 
-	docker run --rm --name {{ $stack.Name }}-{{ $job.Name }} --detach=false \
+	docker run --rm --name {{ $stack.Name }}-{{ $job.Service.Name }}-{{ $job.Name }} --detach=false \
 	{{- if $job.PullPolicy }}
 	 --pull {{ $job.PullPolicy }} \
 	{{- end }}

@@ -11,7 +11,7 @@ type File struct {
 	Name string `yaml:"_"`
 	Path string `yaml:"-"`
 
-	Services map[string]Service `yaml:"services"`
+	Services map[string]*Service `yaml:"services"`
 
 	Networks map[string]Network `yaml:"networks"`
 }
@@ -58,6 +58,10 @@ func ParseFile(path string) (*File, error) {
 	file.Path, err = filepath.Abs(path)
 	if err != nil {
 		return nil, fmt.Errorf("get abs path: %w", err)
+	}
+
+	for name, service := range file.Services {
+		service.Name = name
 	}
 
 	return &file, nil
