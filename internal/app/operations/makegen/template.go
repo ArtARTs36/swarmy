@@ -2,7 +2,14 @@ package makegen
 
 import "github.com/artarts36/swarmy/internal/types/composefile"
 
-const makefileTemplate = `{{ range $stack := .Stacks }}.PHONY: up-{{ $stack.Name }}
+const makefileTemplate = `
+.PHONY: up-all
+up-all: ## Deploy all stacks to Swarm
+{{- range $stack := .Stacks }}
+	make up-{{ $stack.Name }}
+{{- end }}
+
+{{ range $stack := .Stacks }}.PHONY: up-{{ $stack.Name }}
 up-{{ $stack.Name }}: ## Deploy {{ $stack.Name }} to Swarm
 	{{- range $job := $stack.DeployJobs.Before }}
 	@echo "> Running job \"{{ $job.Service.Name }}-{{ $job.Name }}\""
