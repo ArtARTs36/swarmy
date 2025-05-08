@@ -2,11 +2,11 @@ package makegen
 
 import (
 	"fmt"
-	"html/template"
-	"io"
-
 	"github.com/artarts36/swarmy/internal/shared/fpath"
 	"github.com/artarts36/swarmy/internal/types/composefile"
+	"html/template"
+	"io"
+	"path/filepath"
 )
 
 type Operation struct {
@@ -23,13 +23,20 @@ func NewOperation() *Operation {
 func (op *Operation) Run(params Params, result io.Writer) error {
 	stacks := []*stackSpec{}
 
-	for _, path := range params.ComposeFilePaths {
-		stack, err := op.parseStack(path)
+	for _, gpath := range params.ComposeFilePaths {
+		gpaths, err := filepath.Glob(gpath)
 		if err != nil {
-			return fmt.Errorf("parse stack: %w", err)
+			return fmt.Errorf("glob: %w", err)
 		}
 
-		stacks = append(stacks, stack)
+		for _, path := range gpaths {
+			stack, serr := op.parseStack(path)
+			if serr != nil {
+				return fmt.Errorf("parse stack of file %q: %w", path, serr)
+			}
+
+			stacks = append(stacks, stack)
+		}
 	}
 
 	tmpl, err := template.New("makefile").Parse(makefileTemplate)
