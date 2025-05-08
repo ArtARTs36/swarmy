@@ -2,13 +2,14 @@ package makegen
 
 import (
 	"fmt"
-	"github.com/artarts36/swarmy/internal/shared/fpath"
-	"github.com/artarts36/swarmy/internal/types/composefile"
-	"html/template"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
+	"text/template"
+
+	"github.com/artarts36/swarmy/internal/shared/fpath"
+	"github.com/artarts36/swarmy/internal/types/composefile"
 )
 
 type Operation struct {
