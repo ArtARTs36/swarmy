@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"io"
 	"path/filepath"
+	"strings"
 )
 
 type Operation struct {
@@ -24,6 +25,13 @@ func (op *Operation) Run(params Params, result io.Writer) error {
 	stacks := []*stackSpec{}
 
 	for _, gpath := range params.ComposeFilePaths {
+		stackName := ""
+		pathsParts := strings.Split(gpath, ":")
+		if len(pathsParts) == 2 {
+			stackName = pathsParts[0]
+			gpath = pathsParts[1]
+		}
+
 		gpaths, err := filepath.Glob(gpath)
 		if err != nil {
 			return fmt.Errorf("glob: %w", err)
@@ -33,6 +41,10 @@ func (op *Operation) Run(params Params, result io.Writer) error {
 			stack, serr := op.parseStack(path)
 			if serr != nil {
 				return fmt.Errorf("parse stack of file %q: %w", path, serr)
+			}
+
+			if stackName != "" {
+				stack.Name = stackName
 			}
 
 			stacks = append(stacks, stack)
