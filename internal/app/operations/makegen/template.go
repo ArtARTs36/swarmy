@@ -7,12 +7,12 @@ up-{{ $stack.Name }}: ## Deploy {{ $stack.Name }} to Swarm
 	{{- range $job := $stack.DeployJobs.Before }}
 	@echo "> Running job \"{{ $job.Service.Name }}-{{ $job.Name }}\""
 
-	docker run --rm --name {{ $stack.Name }}-{{ $job.Service.Name }}-{{ $job.Name }} --detach=false \
+	@docker run --rm --name {{ $stack.Name }}-{{ $job.Service.Name }}-{{ $job.Name }} --detach=false \
 	{{- if $job.PullPolicy }}
 	 --pull {{ $job.PullPolicy }} \
 	{{- end }}
 	{{ if $job.Environment }} 
-		{{- range $k, $v := $job.Environment }} --env "{{ $k }}={{ $v }}" {{- end }} \
+		{{- range $k, $v := $job.Environment }} --env {{ $k }}='{{ $v }}' {{- end }} \
 	{{- end }}
 	{{ if $job.Networks }}
 		{{- range $network := $job.Networks }} --network {{ $stack.ComposeFile.ResolveNetworkName $network }} {{- end }} \
@@ -21,7 +21,9 @@ up-{{ $stack.Name }}: ## Deploy {{ $stack.Name }} to Swarm
 	{{- end }}
 	 {{ $job.Image }}
 	{{ end }}
-	docker stack deploy --with-registry-auth -c {{ $stack.ComposeFilePath }} {{ $stack.Name }} --detach=false
+	@echo "> Deploying stack \"{{ $stack.Name }}\""
+	
+	@docker stack deploy --with-registry-auth -c {{ $stack.ComposeFilePath }} {{ $stack.Name }} --detach=false
 
 {{ end }}`
 
